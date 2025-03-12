@@ -1,0 +1,16 @@
+@import './base.css';
+@import './color.css';
+
+#app {
+  margin: 0 auto;
+  padding: 2rem 0;
+  font-weight: normal;
+  max-width: 1040px;
+  margin: 0 20px;
+}
+
+body {
+  background-color: #fafafa;
+  display: flex;
+  justify-content: center;
+}

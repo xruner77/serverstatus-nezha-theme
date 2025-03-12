@@ -1,0 +1,9 @@
+:root {
+  --color-blue: oklch(0.623 0.214 259.815);
+  --color-green: oklch(0.723 0.219 149.579);
+  --color-red: oklch(0.637 0.237 25.331);
+  --color-purple: oklch(0.627 0.265 303.9);
+  --color-yellow: oklch(0.75 0.183 55.934);
+
+  --muted-foreground: 25 5.3% 44.7%;
+}
