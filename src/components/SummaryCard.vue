@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :class="color">
+  <div class="card" :class="{ [color]: true, selected }">
     <div class="card-header">
       {{ title }}
     </div>
@@ -19,6 +19,7 @@ defineProps<{
   title: string
   color: string
   glow?: boolean
+  selected?: boolean
   content?: string | number
 }>()
 </script>
@@ -28,39 +29,45 @@ defineProps<{
 
 .card {
   .card-base;
+  cursor: pointer;
 
-  &:hover {
-    &.blue {
-      border-color: var(--color-blue);
-    }
+  &.blue {
+    --border-color: var(--color-blue);
+  }
 
-    &.green {
-      border-color: var(--color-green);
-    }
+  &.green {
+    --border-color: var(--color-green);
+  }
 
-    &.red {
-      border-color: var(--color-red);
-    }
+  &.red {
+    --border-color: var(--color-red);
+  }
 
-    &.yellow {
-      border-color: var(--color-yellow);
-    }
+  &.yellow {
+    --border-color: var(--color-yellow);
+  }
 
-    &.purple {
-      border-color: var(--color-purple);
-    }
+  &.purple {
+    --border-color: var(--color-purple);
+  }
+
+  &:hover,
+  &.selected {
+    border-color: var(--border-color);
+  }
+
+  &.selected {
+    box-shadow: 0 0 0 2px var(--border-color);
   }
 
   .card-header {
     font-size: 16px;
     font-weight: 500;
     line-height: 20px;
-    cursor: default;
   }
 
   .card-body {
     padding-top: 7px;
-    cursor: default;
     font-size: 18px;
     font-weight: 800;
     vertical-align: middle;

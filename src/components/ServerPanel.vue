@@ -1,5 +1,5 @@
 <template>
-  <div class="panel" :class="{ compact: compactMode }">
+  <div class="panel flex" :class="{ compact: compactMode }">
     <div class="os-info">
       <div class="flex">
         <Dot :color="summarized.statusColor" :title="summarized.statusText" />
@@ -9,7 +9,7 @@
     <i class="separator" v-if="!compactMode" />
     <div class="detail">
       <div class="flex">
-        <MiniPanel title="系统" :body="summarized.os" v-if="!compactMode">
+        <MiniPanel title="系统" :body="summarized.os" :capitalize="true" v-if="!compactMode">
           <template #icon><i :class="`fl-${summarized.os}`" /></template>
         </MiniPanel>
         <MiniPanel title="运行时间" :body="summarized.uptime" v-if="!compactMode" />
@@ -80,21 +80,26 @@ const summarized = computed(() => {
   padding-top: 10px;
   padding-bottom: 10px;
   cursor: default;
+  align-items: center;
 
   &:hover {
     background-color: #f8f8f7;
   }
 
-  .os-info,
-  .detail {
-    white-space: nowrap;
-    display: inline-block;
-    vertical-align: middle;
+  .os-info {
+    flex: 0 0 130px;
+
+    > .flex {
+      align-items: center;
+      justify-content: start;
+    }
   }
 
-  .os-info,
   .detail {
-    .flex {
+    white-space: nowrap;
+    flex: 1 1 100%;
+
+    > .flex {
       justify-content: space-between;
       align-items: center;
     }
@@ -107,7 +112,7 @@ const summarized = computed(() => {
   .name {
     flex: 1 1 90px;
     min-width: 0;
-    margin-left: 10px;
+    margin-left: 6px;
     font-weight: 700;
   }
 
@@ -118,29 +123,28 @@ const summarized = computed(() => {
   .separator {
     align-self: stretch;
     margin-right: 10px;
+    flex: 0 0 1px;
   }
 
   @media screen and (max-width: 1024px) {
-    .os-info,
-    .detail {
-      display: block;
-      width: 100%;
+    &.compact {
+      flex-direction: column;
+      padding: 16px 0;
 
-      .flex {
-        justify-content: center;
+      .os-info,
+      .detail {
+        .flex {
+          justify-content: center;
+        }
       }
 
-      .name {
+      .os-info {
         flex: 0 0 auto;
       }
-    }
 
-    .separator {
-      display: none;
-    }
-
-    .os-info {
-      margin: 3px 0 5px 0;
+      .separator {
+        display: none;
+      }
     }
   }
 }

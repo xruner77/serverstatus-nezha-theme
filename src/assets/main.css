@@ -3,14 +3,17 @@
 
 #app {
   margin: 0 auto;
-  padding: 2rem 0;
   font-weight: normal;
-  max-width: 1040px;
-  margin: 0 20px;
+  margin: 0 auto;
 }
 
 body {
   background-color: #fafafa;
-  display: flex;
-  justify-content: center;
+  padding: 1rem 1rem;
+}
+
+@media screen and (min-width: 1040px) {
+  #app {
+    width: 1040px;
+  }
 }

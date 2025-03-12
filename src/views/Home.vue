@@ -9,22 +9,48 @@
       </div>
     </div>
     <div class="summary">
-      <SummaryCard title="服务器总数" :content="serverInfo.total" color="blue" />
-      <SummaryCard title="在线服务器" :content="serverInfo.online" color="green" :glow="true" />
-      <SummaryCard title="离线服务器" :content="serverInfo.offline" color="red" :glow="true" />
-      <SummaryCard title="网络" color="purple">
+      <SummaryCard
+        title="服务器总数"
+        :content="serverInfo.total"
+        color="blue"
+        @click="filterType = 'none'"
+      />
+      <SummaryCard
+        title="在线服务器"
+        :content="serverInfo.online"
+        color="green"
+        :glow="true"
+        :selected="filterType === 'online'"
+        @click="filterType = 'online'"
+      />
+      <SummaryCard
+        title="离线服务器"
+        :content="serverInfo.offline"
+        color="red"
+        :glow="true"
+        :selected="filterType === 'offline'"
+        @click="filterType = 'offline'"
+      />
+      <SummaryCard
+        title="网络"
+        color="purple"
+        :selected="filterType === 'network'"
+        @click="filterType = 'network'"
+      >
         <div>
           <div class="total">
             <span class="total_upload">↑{{ network.total_upload }}</span>
             <span class="total_download">↓{{ network.total_download }}</span>
           </div>
           <div class="realtime">
-            <img :src="icoUpload" class="network-icon" /><span class="upload">{{
-              network.upload
-            }}</span>
-            <img :src="icoDownload" class="network-icon" /><span class="download">{{
-              network.download
-            }}</span>
+            <span class="upload"
+              ><img :src="icoUpload" class="network-icon" /><span>{{ network.upload }}</span></span
+            >
+            <span class="download"
+              ><img :src="icoDownload" class="network-icon" /><span>{{
+                network.download
+              }}</span></span
+            >
           </div>
         </div>
       </SummaryCard>
@@ -49,12 +75,14 @@
       </el-radio-group>
     </div>
     <div class="list" :class="{ compact: panelSize === 'compact' }">
-      <ServerPanel
-        v-for="server in serverList"
-        :key="server.name"
-        :info="server"
-        :size="panelSize"
-      />
+      <div class="scroll-box">
+        <ServerPanel
+          v-for="server in serverList"
+          :key="server.name"
+          :info="server"
+          :size="panelSize"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -62,7 +90,7 @@
 <script setup lang="ts">
 import SummaryCard from '@/components/SummaryCard.vue'
 import ServerPanel from '@/components/ServerPanel.vue'
-import type { ServerStat } from '@/typing.d/stat'
+import type { ServerInfo, ServerStat } from '@/typing.d/stat'
 import axios from 'axios'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import icoUpload from '@/assets/upload.svg'
@@ -88,6 +116,7 @@ const loadData = () => {
 }
 
 const fetcher = setInterval(() => loadData(), 1000)
+const filterType = ref('none')
 
 // calculate server groups
 const groups = computed(() => {
@@ -141,12 +170,26 @@ const network = computed(() => {
 const panelSize = ref('normal')
 
 const serverList = computed(() => {
+  let servers: ServerInfo[] = [...serverStats.value.servers]
   switch (group.value) {
     case 'All':
-      return serverStats.value.servers
+      break
     default:
-      return serverStats.value.servers.filter((s) => s.gid === group.value)
+      servers = servers.filter((s) => s.gid === group.value)
   }
+
+  switch (filterType.value) {
+    case 'online':
+      servers = servers.filter((s) => s.online4 || s.online6)
+      break
+    case 'offline':
+      servers = servers.filter((s) => !s.online4 && !s.online6)
+      break
+    case 'network':
+      servers.sort((a, b) => b.network_tx - a.network_tx)
+      break
+  }
+  return servers
 })
 
 const togglePanelSize = () => {
@@ -168,6 +211,23 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-column-gap: 20px;
+  grid-row-gap: 15px;
+
+  @media screen and (max-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media screen and (max-width: 640px) {
+    .upload,
+    .download {
+      display: block;
+    }
+
+    .total_download,
+    .total_upload {
+      font-size: 11px;
+    }
+  }
 }
 
 .info {
@@ -175,15 +235,23 @@ onUnmounted(() => {
 }
 
 .list {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 10px;
+  overflow-x: auto;
+
+  .scroll-box {
+    min-width: 1040px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 10px;
+  }
 
   &.compact {
-    grid-template-columns: 1fr 1fr;
+    .scroll-box {
+      min-width: 0;
+      grid-template-columns: 1fr 1fr;
 
-    @media screen and (max-width: 870px) {
-      grid-template-columns: 1fr;
+      @media screen and (max-width: 870px) {
+        grid-template-columns: 1fr;
+      }
     }
   }
 }
@@ -207,6 +275,7 @@ onUnmounted(() => {
 
 .network-icon {
   width: 12px;
+  margin: 0 2px;
   vertical-align: middle;
 }
 
@@ -263,8 +332,8 @@ onUnmounted(() => {
   color: #6e11b0;
 }
 
-.upload + .network-icon {
-  margin-left: 5px;
+.upload {
+  margin-right: 5px;
 }
 
 .total {

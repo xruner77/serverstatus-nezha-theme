@@ -3,7 +3,7 @@
     <slot name="icon" />
     <div class="v-flex content">
       <span class="title font-sm">{{ title }}</span>
-      <span class="body">{{ body }}</span>
+      <span class="body" :class="{ capitalize }">{{ body }}</span>
       <ProgressBar v-if="progress" :progress="Number(progress)" />
     </div>
   </div>
@@ -16,6 +16,7 @@ defineProps<{
   title: string
   body: string
   progress?: string
+  capitalize?: boolean
 }>()
 </script>
 
@@ -23,11 +24,11 @@ defineProps<{
 @import '../assets/common.less';
 .mini-panel {
   align-items: center;
-  flex: 0 0 50px;
-  min-width: 50px;
+  flex: 1 1 60px;
+  min-width: 60px;
 
   & + .mini-panel {
-    margin-left: 20px;
+    margin-left: 3px;
   }
 }
 
@@ -43,9 +44,12 @@ defineProps<{
 
   .body {
     font-size: 11px;
-    text-transform: capitalize;
     font-weight: 600;
     white-space: nowrap;
+
+    &.capitalize {
+      text-transform: capitalize;
+    }
   }
 }
 </style>
