@@ -355,9 +355,14 @@ onUnmounted(() => {
 .network-icon {
   width: 12px;
   margin-right: 2px;
+  vertical-align: text-bottom;
 
   svg {
     fill: var(--color-text)
+  }
+
+  & + span {
+    vertical-align: middle;
   }
 }
 
@@ -401,10 +406,10 @@ onUnmounted(() => {
 
 .realtime {
   font-size: 11px;
-  line-height: 14px;
+  line-height: 15px;
   font-weight: 600;
 
-  * {
+  > * {
     vertical-align: top;
   }
 }

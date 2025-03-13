@@ -1,8 +1,8 @@
 <template>
-  <div class="radio-group">
-    <div class="scroller" ref="groupRef">
-      <div class="selector" :style="selectorStyle"></div>
-      <div
+  <span class="radio-group">
+    <span class="scroller" ref="groupRef">
+      <span class="selector" :style="selectorStyle"></span>
+      <span
         class="radio-button"
         v-for="item in options"
         :key="item"
@@ -10,13 +10,13 @@
         @click="() => handleSelect(item)"
       >
         <span>{{ item }}</span>
-      </div>
-    </div>
-  </div>
+      </span>
+    </span>
+  </span>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onMounted } from 'vue'
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{ modelValue: string; options: string[] }>()
@@ -28,28 +28,41 @@ function handleSelect(item: string) {
   }
 }
 
-const selectorStyle = ref<Record<string, string>>({})
-watch(
-  () => [props.modelValue, groupRef.value],
-  ([value]) => {
-    const idx = props.options.indexOf(value as string)
-    if (idx >= 0 && groupRef.value && groupRef.value.children.length > idx + 1) {
-      const el = groupRef.value.children[idx + 1]
-      if (el) {
-        const parentRect = groupRef.value.getBoundingClientRect()
-        const rect = el.getBoundingClientRect()
-        selectorStyle.value = {
-          width: `${rect.width}px`,
-          left: `${rect.left - parentRect.left}px`,
-        }
+function updateSelector(value: string) {
+  const idx = props.options.indexOf(value)
+  if (idx >= 0 && groupRef.value) {
+    const children = groupRef.value.getElementsByClassName('radio-button')
+    const el = children[idx]
+    if (el) {
+      const parentRect = groupRef.value.getBoundingClientRect()
+      const rect = el.getBoundingClientRect()
+      const newStyle = {
+        width: `${rect.width}px`,
+        left: `${rect.left - parentRect.left}px`,
+      }
+      if (
+        newStyle.width !== selectorStyle.value.width ||
+        newStyle.left !== selectorStyle.value.left
+      ) {
+        selectorStyle.value = newStyle
         nextTick(() => {
           el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
         })
       }
+    } else {
+      selectorStyle.value = {
+        visibility: 'hidden',
+      }
     }
-  },
-  { immediate: true },
+  }
+}
+
+const selectorStyle = ref<Record<string, string>>({})
+watch(
+  () => [props.modelValue, props.options],
+  ([value]) => updateSelector(value as string),
 )
+onMounted(() => updateSelector(props.modelValue))
 </script>
 
 <style lang="less" scoped>
