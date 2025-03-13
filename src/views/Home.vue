@@ -52,10 +52,10 @@
           </div>
           <div class="realtime">
             <span class="upload"
-              ><img :src="icoUpload" class="network-icon" /><span>{{ network.upload }}</span></span
+              ><inline-svg :src="icoUpload" class="network-icon" /><span>{{ network.upload }}</span></span
             >
             <span class="download"
-              ><img :src="icoDownload" class="network-icon" /><span>{{
+              ><inline-svg :src="icoDownload" class="network-icon" /><span>{{
                 network.download
               }}</span></span
             >
@@ -355,7 +355,10 @@ onUnmounted(() => {
 .network-icon {
   width: 12px;
   margin-right: 2px;
-  vertical-align: middle;
+
+  svg {
+    fill: var(--color-text)
+  }
 }
 
 .quick-button {
@@ -402,7 +405,7 @@ onUnmounted(() => {
   font-weight: 600;
 
   * {
-    vertical-align: middle;
+    vertical-align: top;
   }
 }
 
