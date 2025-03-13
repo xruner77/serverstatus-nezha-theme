@@ -17,6 +17,8 @@
   --color-light-highlight: white;
   --color-light-border: hsl(20 5.9% 90%);
   --color-light-shadow:
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 1px,
     oklab(0.922 0 0 / 0.4) 0px 10px 15px -3px, oklab(0.922 0 0 / 0.4) 0px 4px 6px -4px;
 
   --color-dark-bluetext: oklch(0.707 0.165 254.624);
@@ -28,7 +30,10 @@
   --color-dark-gray: #292524;
   --color-dark-highlight: #44403b;
   --color-dark-border: hsl(12 6.5% 15.1%);
-  --color-dark-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 1px;
+  --color-dark-shadow:
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px;
 }
 
 :root {

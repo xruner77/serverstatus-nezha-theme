@@ -61,7 +61,7 @@ defineProps<{
   }
 
   .card-header {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     line-height: 20px;
   }
@@ -69,7 +69,7 @@ defineProps<{
   .card-body {
     padding-top: 7px;
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 600;
     vertical-align: middle;
   }
 }

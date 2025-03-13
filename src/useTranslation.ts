@@ -9,10 +9,16 @@ export function useTranslation(): Record<string, string> {
     const translations: Record<string, any> = {
       'zh-CN': langZhCn,
       'en-US': langEnUs,
+      en: langEnUs,
+      zh: langZhCn,
     }
     for (const lang of preferredLanguages) {
       if (translations[lang]) {
         return translations[lang]
+      }
+      const short = lang.split('-').shift() as string
+      if (translations[short]) {
+        return translations[short]
       }
     }
     return langZhCn

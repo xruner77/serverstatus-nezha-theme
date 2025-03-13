@@ -222,10 +222,29 @@ const serverList = computed(() => {
   return servers
 })
 
-const updateColorScheme = () => {
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    colorMode.value = 'dark'
-  }
+// color scheme setup and monitoring
+const colorSchemer = {
+  queryList: window.matchMedia('(prefers-color-scheme: dark)'),
+  enabled: false,
+  update() {
+    if (window.matchMedia) {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        colorMode.value = 'dark'
+      } else {
+        colorMode.value = 'light'
+      }
+    }
+  },
+  enable() {
+    this.queryList.addEventListener('change', this.update)
+    this.enabled = true
+  },
+  disable() {
+    if (this.enabled) {
+      this.queryList.removeEventListener('change', this.update)
+      this.enabled = false
+    }
+  },
 }
 
 const togglePanelSize = () => {
@@ -238,6 +257,8 @@ const toggleTrafficMode = () => {
 
 const toggleColorMode = () => {
   colorMode.value = colorMode.value === 'light' ? 'dark' : 'light'
+  colorSchemer.disable()
+
   if (colorMode.value === 'light') {
     document.body.classList.remove('dark')
     document.body.classList.add('light')
@@ -249,10 +270,12 @@ const toggleColorMode = () => {
 
 onMounted(() => {
   loadData()
-  updateColorScheme()
+  colorSchemer.enable()
+  colorSchemer.update()
 })
 
 onUnmounted(() => {
+  colorSchemer.disable()
   clearInterval(tmr)
   clearInterval(fetcher)
 })
@@ -278,8 +301,8 @@ onUnmounted(() => {
 
     .total_download,
     .total_upload {
-      font-size: 11px;
       white-space: nowrap;
+      font-size: 11px;
     }
   }
 }
@@ -346,7 +369,7 @@ onUnmounted(() => {
   background-color: var(--color-gray);
   border-radius: 50%;
   vertical-align: middle;
-  margin-right: 15px;
+  margin-right: 10px;
   transition: all 0.2s;
   cursor: pointer;
   --fill-color: var(--color-text);
@@ -400,6 +423,8 @@ onUnmounted(() => {
   font-size: 14px;
   font-weight: 500;
   word-break: break-all;
+  padding-bottom: 5px;
+  line-height: 14px;
 }
 
 .footer {

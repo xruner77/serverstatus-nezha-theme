@@ -33,7 +33,7 @@ watch(
   () => [props.modelValue, groupRef.value],
   ([value]) => {
     const idx = props.options.indexOf(value as string)
-    if (idx >= 0 && groupRef.value) {
+    if (idx >= 0 && groupRef.value && groupRef.value.children.length > idx + 1) {
       const el = groupRef.value.children[idx + 1]
       if (el) {
         const parentRect = groupRef.value.getBoundingClientRect()

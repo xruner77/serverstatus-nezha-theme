@@ -62,7 +62,6 @@ body {
   /* color: var(--color-text); */
   /* background: var(--color-background); */
   transition:
-    box-shadow 0.2s,
     color 0.2s,
     background-color 0.2s;
   line-height: 1.6;
