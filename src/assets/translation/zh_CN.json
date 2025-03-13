@@ -1,0 +1,21 @@
+{
+  "All": "全部",
+  "Time": "当前时间",
+  "Summary": "概览",
+  "CompactView": "紧凑视图",
+  "MonthlyView": "月流量视图",
+  "ServerCount": "服务器总数",
+  "OnlineServer": "在线服务器",
+  "OfflineServer": "离线服务器",
+  "Network": "网络",
+  "System": "系统",
+  "Uptime": "运行时间",
+  "Memory": "内存",
+  "Storage": "存储",
+  "Upload": "上传",
+  "Download": "下载",
+  "MonthlyUp": "月上传",
+  "MonthlyDown": "月下载",
+  "TotalUp": "总上传",
+  "TotalDown": "总下载"
+}

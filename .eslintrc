@@ -1,0 +1,11 @@
+{
+  "env": {
+    "browser": true, //浏览器环境中的全局变量
+    "es6": true, //启用除了modules以外的所有ES6特性（该选项会自动设置 ecmaVersion 解析器选项为 6）
+    "node": true, //Node.js 全局变量和 Node.js 作用域
+  },
+  "rules": {
+    "vue/multi-word-component-names": "off",
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}

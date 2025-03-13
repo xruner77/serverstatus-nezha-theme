@@ -3,12 +3,10 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+import InlineSvg from 'vue-inline-svg'
 
 const app = createApp(App)
+app.component('inline-svg', InlineSvg)
 
-app.use(ElementPlus)
 app.use(router)
-
 app.mount('#app')

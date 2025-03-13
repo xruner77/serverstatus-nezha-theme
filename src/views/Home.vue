@@ -1,22 +1,30 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
-    <div class="banner">Nezha Theme for Serverstatus-Rust</div>
+    <div class="banner">
+      ServerStatus
+      <div class="right-toolbar">
+        <div class="quick-button" @click="toggleColorMode">
+          <inline-svg :src="colorMode === 'light' ? icoLight : icoDark" />
+        </div>
+      </div>
+    </div>
     <div class="info">
-      <div style="font-weight: 600; font-size: 16px">👋 概览</div>
+      <div style="font-weight: 600; font-size: 16px">👋 {{ locale.Summary }}</div>
       <div style="font-weight: 500; font-size: 14px">
-        <span style="color: #91908f; margin-right: 5px">当前时间</span>{{ time }}
+        <span style="color: #91908f; margin-right: 5px">{{ locale.Time }}</span
+        >{{ time }}
       </div>
     </div>
     <div class="summary">
       <SummaryCard
-        title="服务器总数"
+        :title="locale.ServerCount"
         :content="serverInfo.total"
         color="blue"
         @click="filterType = 'none'"
       />
       <SummaryCard
-        title="在线服务器"
+        :title="locale.OnlineServer"
         :content="serverInfo.online"
         color="green"
         :glow="true"
@@ -24,7 +32,7 @@
         @click="filterType = 'online'"
       />
       <SummaryCard
-        title="离线服务器"
+        :title="locale.OfflineServer"
         :content="serverInfo.offline"
         color="red"
         :glow="true"
@@ -32,7 +40,7 @@
         @click="filterType = 'offline'"
       />
       <SummaryCard
-        title="网络"
+        :title="locale.Network"
         color="purple"
         :selected="filterType === 'network'"
         @click="filterType = 'network'"
@@ -55,24 +63,24 @@
         </div>
       </SummaryCard>
     </div>
-    <div class="toolbar">
-      <span class="view-type" @click="togglePanelSize" :class="{ down: panelSize === 'compact' }">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
-          data-slot="icon"
-          class="size-[13px]"
-        >
-          <path
-            d="M14 17h2.75A2.25 2.25 0 0 0 19 14.75v-9.5A2.25 2.25 0 0 0 16.75 3H14v14ZM12.5 3h-5v14h5V3ZM3.25 3H6v14H3.25A2.25 2.25 0 0 1 1 14.75v-9.5A2.25 2.25 0 0 1 3.25 3Z"
-          ></path>
-        </svg>
+    <div class="toolbar flex">
+      <span
+        class="quick-button primary"
+        @click="toggleTrafficMode"
+        :class="{ down: trafficMode === 'monthly' }"
+        :title="locale.MonthlyView"
+      >
+        <inline-svg :src="icoMonth" />
       </span>
-      <el-radio-group v-model="group" size="mini" class="group">
-        <el-radio-button v-for="g in groups" :key="g" :label="g"></el-radio-button>
-      </el-radio-group>
+      <span
+        class="quick-button primary"
+        @click="togglePanelSize"
+        :class="{ down: panelSize === 'compact' }"
+        :title="locale.CompactView"
+      >
+        <inline-svg :src="icoView" />
+      </span>
+      <RadioGroup v-model="group" class="group" :options="groups" />
     </div>
     <div class="list" :class="{ compact: panelSize === 'compact' }">
       <div class="scroll-box">
@@ -81,8 +89,14 @@
           :key="server.name"
           :info="server"
           :size="panelSize"
+          :traffic-mode="trafficMode"
         />
       </div>
+    </div>
+    <div class="footer">
+      <a href="https://github.com/snowie2000/serverstatus-nezha-theme">Nezha theme</a>
+      <span>Powered by</span>
+      <a href="https://github.com/zdz/ServerStatus-Rust">ServerStatus</a>
     </div>
   </div>
 </template>
@@ -95,19 +109,29 @@ import axios from 'axios'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import icoUpload from '@/assets/upload.svg'
 import icoDownload from '@/assets/download.svg'
+import icoMonth from '@/assets/month.svg'
+import icoView from '@/assets/view.svg'
+import icoLight from '@/assets/light.svg'
+import icoDark from '@/assets/dark.svg'
 import { filesize } from 'filesize'
+import RadioGroup from '@/components/RadioGroup.vue'
+import { useTranslation } from '@/useTranslation'
+
+const locale = useTranslation()
 
 // get current time.
-const time = ref<string>('')
-const tmr = setInterval(() => {
-  time.value = new Date().toLocaleTimeString('en-US', {
+const getTime = () =>
+  new Date().toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   })
+const time = ref<string>(getTime())
+const tmr = setInterval(() => {
+  time.value = getTime()
 }, 1000)
 
-const group = ref('All')
+const group = ref(locale.All)
 const serverStats = ref<ServerStat>({ updated: 0, servers: [] })
 const loadData = () => {
   axios.get<ServerStat>('/json/stats.json').then((res) => {
@@ -120,7 +144,7 @@ const filterType = ref('none')
 
 // calculate server groups
 const groups = computed(() => {
-  const ret = ['All']
+  const ret = [locale.All]
   serverStats.value.servers.reduce((acc, cur) => {
     if (!acc.includes(cur.gid)) {
       acc.push(cur.gid)
@@ -156,6 +180,10 @@ const network = computed(() => {
     acc.download += cur.network_rx
     acc.total_upload += cur.network_out
     acc.total_download += cur.network_in
+    if (trafficMode.value === 'monthly') {
+      acc.total_upload -= cur.last_network_out
+      acc.total_download -= cur.last_network_in
+    }
     return acc
   }, ret)
 
@@ -168,11 +196,13 @@ const network = computed(() => {
 })
 
 const panelSize = ref('normal')
+const trafficMode = ref<'monthly' | 'total'>('monthly')
+const colorMode = ref('light')
 
 const serverList = computed(() => {
   let servers: ServerInfo[] = [...serverStats.value.servers]
   switch (group.value) {
-    case 'All':
+    case locale.All:
       break
     default:
       servers = servers.filter((s) => s.gid === group.value)
@@ -186,18 +216,40 @@ const serverList = computed(() => {
       servers = servers.filter((s) => !s.online4 && !s.online6)
       break
     case 'network':
-      servers.sort((a, b) => b.network_tx - a.network_tx)
+      servers.sort((a, b) => b.network_tx + b.network_rx - a.network_tx - a.network_rx)
       break
   }
   return servers
 })
 
+const updateColorScheme = () => {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    colorMode.value = 'dark'
+  }
+}
+
 const togglePanelSize = () => {
   panelSize.value = panelSize.value === 'normal' ? 'compact' : 'normal'
 }
 
+const toggleTrafficMode = () => {
+  trafficMode.value = trafficMode.value === 'monthly' ? 'total' : 'monthly'
+}
+
+const toggleColorMode = () => {
+  colorMode.value = colorMode.value === 'light' ? 'dark' : 'light'
+  if (colorMode.value === 'light') {
+    document.body.classList.remove('dark')
+    document.body.classList.add('light')
+  } else {
+    document.body.classList.remove('light')
+    document.body.classList.add('dark')
+  }
+}
+
 onMounted(() => {
   loadData()
+  updateColorScheme()
 })
 
 onUnmounted(() => {
@@ -221,11 +273,13 @@ onUnmounted(() => {
     .upload,
     .download {
       display: block;
+      white-space: nowrap;
     }
 
     .total_download,
     .total_upload {
       font-size: 11px;
+      white-space: nowrap;
     }
   }
 }
@@ -238,7 +292,7 @@ onUnmounted(() => {
   overflow-x: auto;
 
   .scroll-box {
-    min-width: 1040px;
+    min-width: 920px;
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 10px;
@@ -260,50 +314,59 @@ onUnmounted(() => {
   margin-bottom: 15px;
   font-size: 18px;
   font-weight: 500;
+
+  .right-toolbar {
+    float: right;
+  }
 }
 
 .toolbar {
   margin: 20px 0;
+  align-items: center;
 }
 
 .group {
-  border-radius: 30px;
-  padding: 4px;
-  background-color: #f5f5f4;
   vertical-align: middle;
 }
 
 .network-icon {
   width: 12px;
-  margin: 0 2px;
+  margin-right: 2px;
   vertical-align: middle;
 }
 
-.view-type {
-  width: 32px;
+.quick-button {
+  flex: 0 0 32px;
   display: inline-block;
+  width: 32px;
   height: 32px;
-  padding: 6px;
+  padding: 8px;
+  line-height: 16px;
   text-align: center;
-  background-color: #f5f5f4;
+  background-color: var(--color-gray);
   border-radius: 50%;
   vertical-align: middle;
   margin-right: 15px;
   transition: all 0.2s;
   cursor: pointer;
+  --fill-color: var(--color-text);
+
+  &.primary {
+    --fill-color: #2b7fff;
+  }
 
   &:hover {
-    background-color: #c8deff;
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   svg {
-    fill: #2b7fff;
-    height: 14px;
-    width: 14px;
+    fill: var(--fill-color);
+    height: 16px;
+    width: 16px;
   }
 
   &.down {
-    background-color: #2b7fff;
+    background-color: var(--fill-color);
     svg {
       fill: white;
     }
@@ -320,16 +383,13 @@ onUnmounted(() => {
   }
 }
 
-.total_download {
-  margin-left: 5px;
-}
-
 .total_upload {
-  color: #2c4cbe;
+  color: var(--color-bluetext);
+  margin-right: 5px;
 }
 
 .total_download {
-  color: #6e11b0;
+  color: var(--color-purpletext);
 }
 
 .upload {
@@ -339,34 +399,20 @@ onUnmounted(() => {
 .total {
   font-size: 14px;
   font-weight: 500;
+  word-break: break-all;
 }
 
-::v-deep(.el-radio-button__inner),
-::v-deep(.el-radio-button) {
-  border-radius: 22px !important;
-  background-color: transparent;
-  border: none !important;
-  font-weight: 600;
-  color: #aaa49f;
+.footer {
+  padding: 20px 0 15px 0;
+  text-align: center;
+  font-size: 13px;
 
-  &::v-deep(.is-active) {
-    background-color: white;
+  a {
+    color: var(--color-bluetext);
   }
 
-  &:hover {
-    color: rgb(90, 90, 90);
+  span {
+    margin: 0 5px;
   }
-}
-
-::v-deep(.el-radio-button.is-active .el-radio-button__inner) {
-  background-color: white !important;
-  color: black !important;
-  box-shadow:
-    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
-    oklab(0 0 0 / 0.05) 0px 10px 15px -3px,
-    oklab(0 0 0 / 0.05) 0px 4px 6px -4px !important;
 }
 </style>

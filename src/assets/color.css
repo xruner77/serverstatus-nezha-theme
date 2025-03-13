@@ -6,4 +6,77 @@
   --color-yellow: oklch(0.75 0.183 55.934);
 
   --muted-foreground: 25 5.3% 44.7%;
+
+  --color-light-bluetext: #2c4cbe;
+  --color-light-purpletext: #6e11b0;
+  --color-light-background: white;
+  --color-light-text: black;
+  --color-light-body: #fafafa;
+  --color-light-hover: #f8f8f7;
+  --color-light-gray: #f5f5f4;
+  --color-light-highlight: white;
+  --color-light-border: hsl(20 5.9% 90%);
+  --color-light-shadow:
+    oklab(0.922 0 0 / 0.4) 0px 10px 15px -3px, oklab(0.922 0 0 / 0.4) 0px 4px 6px -4px;
+
+  --color-dark-bluetext: oklch(0.707 0.165 254.624);
+  --color-dark-purpletext: oklch(0.714 0.203 305.504);
+  --color-dark-background: #0c0a09;
+  --color-dark-text: rgb(250, 250, 249);
+  --color-dark-body: #171411;
+  --color-dark-hover: #201d1a;
+  --color-dark-gray: #292524;
+  --color-dark-highlight: #44403b;
+  --color-dark-border: hsl(12 6.5% 15.1%);
+  --color-dark-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 1px;
+}
+
+:root {
+  --color-background: var(--color-light-background);
+  --color-text: var(--color-light-text);
+  --color-bluetext: var(--color-light-bluetext);
+  --color-purpletext: var(--color-light-purpletext);
+  --color-body: var(--color-light-body);
+  --color-border: var(--color-light-border);
+  --color-shadow: var(--color-light-shadow);
+  --color-gray: var(--color-light-gray);
+  --color-highlight: var(--color-light-highlight);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--color-dark-background);
+    --color-text: var(--color-dark-text);
+    --color-bluetext: var(--color-dark-bluetext);
+    --color-purpletext: var(--color-dark-purpletext);
+    --color-body: var(--color-dark-body);
+    --color-border: var(--color-dark-border);
+    --color-shadow: var(--color-dark-shadow);
+    --color-gray: var(--color-dark-gray);
+    --color-highlight: var(--color-dark-highlight);
+  }
+}
+
+:root .dark {
+  --color-background: var(--color-dark-background);
+  --color-text: var(--color-dark-text);
+  --color-bluetext: var(--color-dark-bluetext);
+  --color-purpletext: var(--color-dark-purpletext);
+  --color-body: var(--color-dark-body);
+  --color-border: var(--color-dark-border);
+  --color-shadow: var(--color-dark-shadow);
+  --color-gray: var(--color-dark-gray);
+  --color-highlight: var(--color-dark-highlight);
+}
+
+:root .light {
+  --color-background: var(--color-light-background);
+  --color-text: var(--color-light-text);
+  --color-bluetext: var(--color-light-bluetext);
+  --color-purpletext: var(--color-light-purpletext);
+  --color-body: var(--color-light-body);
+  --color-border: var(--color-light-border);
+  --color-shadow: var(--color-light-shadow);
+  --color-gray: var(--color-light-gray);
+  --color-highlight: var(--color-light-highlight);
 }

@@ -22,7 +22,7 @@ const color = computed(() => {
 .outer {
   position: relative;
   height: 3px;
-  background-color: #f5f5f4;
+  background-color: var(--color-gray);
   border-radius: 3px;
   overflow: hidden;
 }

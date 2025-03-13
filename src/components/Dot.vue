@@ -55,13 +55,17 @@ defineProps<{
   border-radius: 50%;
   width: 8px;
   height: 8px;
-  animation: glow 1s infinite ease-in;
+  animation: glow 1.5s infinite linear;
 }
 
 @keyframes glow {
   0% {
     scale: 1;
     opacity: 0.8;
+  }
+  50% {
+    scale: 2;
+    opacity: 0;
   }
   100% {
     scale: 2;

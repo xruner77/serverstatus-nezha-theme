@@ -26,6 +26,8 @@ defineProps<{
   align-items: center;
   flex: 1 1 60px;
   min-width: 60px;
+  max-width: 70px;
+  overflow: visible;
 
   & + .mini-panel {
     margin-left: 3px;

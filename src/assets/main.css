@@ -8,12 +8,16 @@
 }
 
 body {
-  background-color: #fafafa;
+  background-color: var(--color-body);
   padding: 1rem 1rem;
+  color: var(--color-text);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
-@media screen and (min-width: 1040px) {
+@media screen and (min-width: 1024px) {
   #app {
-    width: 1040px;
+    max-width: 1024px;
   }
 }
