@@ -1,8 +1,8 @@
 <template>
-  <span class="radio-group">
-    <span class="scroller" ref="groupRef">
-      <span class="selector" :style="selectorStyle"></span>
-      <span
+  <div class="radio-group">
+    <div class="scroller" ref="groupRef">
+      <div class="selector" :style="selectorStyle"></div>
+      <div
         class="radio-button"
         v-for="item in options"
         :key="item"
@@ -10,9 +10,9 @@
         @click="() => handleSelect(item)"
       >
         <span>{{ item }}</span>
-      </span>
-    </span>
-  </span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -22,6 +22,16 @@ const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{ modelValue: string; options: string[] }>()
 const groupRef = ref<HTMLElement | null>(null)
 
+function isElementVerticallyInView(element: Element) {
+  if (!element) return false
+
+  const rect = element.getBoundingClientRect()
+  const windowHeight = window.innerHeight || document.documentElement.clientHeight
+
+  // Check if the element's top or bottom is within the viewport's vertical bounds.
+  return rect.top <= windowHeight && rect.bottom >= 0
+}
+
 function handleSelect(item: string) {
   if (item !== props.modelValue) {
     emit('update:modelValue', item)
@@ -29,8 +39,17 @@ function handleSelect(item: string) {
 }
 
 function updateSelector(value: string) {
+  if (!groupRef.value) return
+
+  // check if css is loaded
+  const style = window.getComputedStyle(groupRef.value)
+  if (style.getPropertyValue('display') === 'block') {
+    setTimeout(() => updateSelector(value), 100)
+    return
+  }
+
   const idx = props.options.indexOf(value)
-  if (idx >= 0 && groupRef.value) {
+  if (idx >= 0) {
     const children = groupRef.value.getElementsByClassName('radio-button')
     const el = children[idx]
     if (el) {
@@ -46,7 +65,10 @@ function updateSelector(value: string) {
       ) {
         selectorStyle.value = newStyle
         nextTick(() => {
-          el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+          // only scroll when it is vertically in view
+          if (isElementVerticallyInView(el)) {
+            el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+          }
         })
       }
     } else {
@@ -59,8 +81,10 @@ function updateSelector(value: string) {
 
 const selectorStyle = ref<Record<string, string>>({})
 watch(
-  () => [props.modelValue, props.options],
-  ([value]) => updateSelector(value as string),
+  () => [props.modelValue, props.options, groupRef.value],
+  ([value]) => {
+    nextTick(() => updateSelector(value as string))
+  },
 )
 onMounted(() => updateSelector(props.modelValue))
 </script>

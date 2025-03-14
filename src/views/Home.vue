@@ -52,7 +52,9 @@
           </div>
           <div class="realtime">
             <span class="upload"
-              ><inline-svg :src="icoUpload" class="network-icon" /><span>{{ network.upload }}</span></span
+              ><inline-svg :src="icoUpload" class="network-icon" /><span>{{
+                network.upload
+              }}</span></span
             >
             <span class="download"
               ><inline-svg :src="icoDownload" class="network-icon" /><span>{{
@@ -106,7 +108,7 @@ import SummaryCard from '@/components/SummaryCard.vue'
 import ServerPanel from '@/components/ServerPanel.vue'
 import type { ServerInfo, ServerStat } from '@/typing.d/stat'
 import axios from 'axios'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import icoUpload from '@/assets/upload.svg'
 import icoDownload from '@/assets/download.svg'
 import icoMonth from '@/assets/month.svg'
@@ -143,16 +145,20 @@ const fetcher = setInterval(() => loadData(), 1000)
 const filterType = ref('none')
 
 // calculate server groups
-const groups = computed(() => {
+const groups = ref<string[]>([])
+
+watch(serverStats, (stats) => {
   const ret = [locale.All]
-  serverStats.value.servers.reduce((acc, cur) => {
+  stats.servers.reduce((acc, cur) => {
     if (!acc.includes(cur.gid)) {
       acc.push(cur.gid)
     }
     return acc
   }, ret)
 
-  return ret
+  if (!arrEqual(ret, groups.value)) {
+    groups.value = ret
+  }
 })
 
 // server count info
@@ -259,6 +265,11 @@ const toggleColorMode = () => {
   colorMode.value = colorMode.value === 'light' ? 'dark' : 'light'
   colorSchemer.disable()
 
+  document.body.classList.add('animating')
+  setTimeout(() => {
+    document.body.classList.remove('animating')
+  }, 500)
+
   if (colorMode.value === 'light') {
     document.body.classList.remove('dark')
     document.body.classList.add('light')
@@ -279,6 +290,14 @@ onUnmounted(() => {
   clearInterval(tmr)
   clearInterval(fetcher)
 })
+
+// helpers
+function arrEqual(a: unknown[], b: unknown[]) {
+  if (a.length === b.length) {
+    return a.every((it, i) => it === b[i])
+  }
+  return false
+}
 </script>
 
 <style lang="css" scoped>
@@ -350,6 +369,7 @@ onUnmounted(() => {
 
 .group {
   vertical-align: middle;
+  margin-left: 10px;
 }
 
 .network-icon {
@@ -358,7 +378,7 @@ onUnmounted(() => {
   vertical-align: text-bottom;
 
   svg {
-    fill: var(--color-text)
+    fill: var(--color-text);
   }
 
   & + span {
@@ -377,7 +397,6 @@ onUnmounted(() => {
   background-color: var(--color-gray);
   border-radius: 50%;
   vertical-align: middle;
-  margin-right: 10px;
   transition: all 0.2s;
   cursor: pointer;
   --fill-color: var(--color-text);
@@ -388,6 +407,10 @@ onUnmounted(() => {
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  & + .quick-button {
+    margin-left: 10px;
   }
 
   svg {
