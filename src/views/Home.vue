@@ -13,7 +13,7 @@
       <div style="font-weight: 600; font-size: 16px">👋 {{ locale.Summary }}</div>
       <div style="font-weight: 500; font-size: 14px">
         <span style="color: #91908f; margin-right: 5px">{{ locale.Time }}</span
-        >{{ time }}
+        >{{ time }}<span class="loader" v-if="loading"></span>
       </div>
     </div>
     <div class="summary">
@@ -120,25 +120,30 @@ import RadioGroup from '@/components/RadioGroup.vue'
 import { useTranslation } from '@/useTranslation'
 
 const locale = useTranslation()
-
-// get current time.
-const getTime = () =>
-  new Date().toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  })
-const time = ref<string>(getTime())
-const tmr = setInterval(() => {
-  time.value = getTime()
-}, 1000)
+const loading = ref(true)
 
 const group = ref(locale.All)
 const serverStats = ref<ServerStat>({ updated: 0, servers: [] })
+const time = computed(() => {
+  if (serverStats.value.updated) {
+    return new Date(serverStats.value.updated * 1000).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    })
+  }
+  return ''
+})
 const loadData = () => {
-  axios.get<ServerStat>('/json/stats.json').then((res) => {
-    serverStats.value = res.data
-  })
+  axios
+    .get<ServerStat>('/json/stats.json')
+    .then((res) => {
+      serverStats.value = res.data
+      loading.value = false
+    })
+    .catch(() => {
+      loading.value = true
+    })
 }
 
 const fetcher = setInterval(() => loadData(), 1000)
@@ -287,7 +292,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   colorSchemer.disable()
-  clearInterval(tmr)
   clearInterval(fetcher)
 })
 
@@ -456,6 +460,27 @@ function arrEqual(a: unknown[], b: unknown[]) {
   word-break: break-all;
   padding-bottom: 5px;
   line-height: 14px;
+}
+
+.loader {
+  width: 16px;
+  height: 16px;
+  margin: 0 0 -3px 10px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 2px solid var(--color-green);
+  border-right: 2px solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .footer {
