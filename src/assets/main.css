@@ -1,5 +1,5 @@
 @import './base.css';
-@import './color.css';
+@import './color.less';
 
 #app {
   margin: 0 auto;
@@ -8,7 +8,7 @@
 }
 
 body {
-  background-color: var(--color-body);
+  background-color: hsl(var(--background));
   padding: 1rem 1rem;
   color: var(--color-text);
   transition:

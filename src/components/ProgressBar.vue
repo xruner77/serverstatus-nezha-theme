@@ -36,15 +36,15 @@ const color = computed(() => {
   transition: width 0.2s ease;
 
   &.success {
-    background-color: var(--color-green);
+    background-color: var(--color-green-500);
   }
 
   &.warning {
-    background-color: var(--color-yellow);
+    background-color: var(--color-orange-500);
   }
 
   &.danger {
-    background-color: var(--color-red);
+    background-color: var(--color-red-500);
   }
 }
 </style>

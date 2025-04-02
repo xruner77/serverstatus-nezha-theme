@@ -1,10 +1,6 @@
-:root {
-  --color-blue: oklch(0.623 0.214 259.815);
-  --color-green: oklch(0.723 0.219 149.579);
-  --color-red: oklch(0.637 0.237 25.331);
-  --color-purple: oklch(0.627 0.265 303.9);
-  --color-yellow: oklch(0.75 0.183 55.934);
+@import './tailwind.css';
 
+:root {
   --muted-foreground: 25 5.3% 44.7%;
 
   --color-light-bluetext: #2c4cbe;
@@ -36,52 +32,40 @@
     rgba(0, 0, 0, 0) 0px 0px 0px 0px;
 }
 
-:root {
+.light-theme {
   --color-background: var(--color-light-background);
-  --color-text: var(--color-light-text);
-  --color-bluetext: var(--color-light-bluetext);
-  --color-purpletext: var(--color-light-purpletext);
-  --color-body: var(--color-light-body);
+  --color-text: black;
+  --color-bluetext: var(--color-blue-800);
+  --color-purpletext: var(--color-purple-800);
   --color-border: var(--color-light-border);
   --color-shadow: var(--color-light-shadow);
   --color-gray: var(--color-light-gray);
   --color-highlight: var(--color-light-highlight);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--color-dark-background);
-    --color-text: var(--color-dark-text);
-    --color-bluetext: var(--color-dark-bluetext);
-    --color-purpletext: var(--color-dark-purpletext);
-    --color-body: var(--color-dark-body);
-    --color-border: var(--color-dark-border);
-    --color-shadow: var(--color-dark-shadow);
-    --color-gray: var(--color-dark-gray);
-    --color-highlight: var(--color-dark-highlight);
-  }
-}
-
-:root .dark {
+.dark-theme {
   --color-background: var(--color-dark-background);
-  --color-text: var(--color-dark-text);
-  --color-bluetext: var(--color-dark-bluetext);
-  --color-purpletext: var(--color-dark-purpletext);
-  --color-body: var(--color-dark-body);
+  --color-text: rgb(250, 250, 249);
+  --color-bluetext: var(--color-blue-400);
+  --color-purpletext: var(--color-purple-400);
   --color-border: var(--color-dark-border);
   --color-shadow: var(--color-dark-shadow);
   --color-gray: var(--color-dark-gray);
   --color-highlight: var(--color-dark-highlight);
 }
 
-:root .light {
-  --color-background: var(--color-light-background);
-  --color-text: var(--color-light-text);
-  --color-bluetext: var(--color-light-bluetext);
-  --color-purpletext: var(--color-light-purpletext);
-  --color-body: var(--color-light-body);
-  --color-border: var(--color-light-border);
-  --color-shadow: var(--color-light-shadow);
-  --color-gray: var(--color-light-gray);
-  --color-highlight: var(--color-light-highlight);
+:root {
+  .light-theme;
+
+  .dark {
+    .dark-theme;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .dark-theme;
+  }
+
+  .light {
+    .light-theme;
+  }
 }

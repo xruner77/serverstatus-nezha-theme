@@ -20,30 +20,27 @@ defineProps<{
   height: 8px;
   margin-right: 4px;
   vertical-align: middle;
+  --color: transpanent;
+  background-color: var(--color);
 
   &.blue {
-    background-color: var(--color-blue);
-    --color: var(--color-blue);
+    --color: var(--color-blue-500);
   }
 
   &.green {
-    background-color: var(--color-green);
-    --color: var(--color-green);
+    --color: var(--color-green-500);
   }
 
   &.red {
-    background-color: var(--color-red);
-    --color: var(--color-red);
+    --color: var(--color-red-500);
   }
 
   &.yellow {
-    background-color: var(--color-yellow);
-    --color: var(--color-yellow);
+    --color: var(--color-orange-500);
   }
 
   &.purple {
-    background-color: var(--color-purple);
-    --color: var(--color-purple);
+    --color: var(--color-purple-500);
   }
 }
 

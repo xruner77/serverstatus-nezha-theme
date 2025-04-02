@@ -134,6 +134,8 @@ const time = computed(() => {
   }
   return ''
 })
+
+let fetcher = 0
 const loadData = () => {
   axios
     .get<ServerStat>('/json/stats.json')
@@ -144,9 +146,11 @@ const loadData = () => {
     .catch(() => {
       loading.value = true
     })
+    .finally(() => {
+      fetcher = setTimeout(() => loadData(), 1000)
+    })
 }
 
-const fetcher = setInterval(() => loadData(), 1000)
 const filterType = ref('none')
 
 // calculate server groups
@@ -292,7 +296,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   colorSchemer.disable()
-  clearInterval(fetcher)
+  clearTimeout(fetcher)
 })
 
 // helpers
@@ -468,7 +472,7 @@ function arrEqual(a: unknown[], b: unknown[]) {
   margin: 0 0 -3px 10px;
   border-radius: 50%;
   display: inline-block;
-  border-top: 2px solid var(--color-green);
+  border-top: 2px solid var(--color-green-500);
   border-right: 2px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;

@@ -32,23 +32,23 @@ defineProps<{
   cursor: pointer;
 
   &.blue {
-    --border-color: var(--color-blue);
+    --border-color: var(--color-blue-500);
   }
 
   &.green {
-    --border-color: var(--color-green);
+    --border-color: var(--color-green-500);
   }
 
   &.red {
-    --border-color: var(--color-red);
+    --border-color: var(--color-red-500);
   }
 
   &.yellow {
-    --border-color: var(--color-yellow);
+    --border-color: var(--color-orange-500);
   }
 
   &.purple {
-    --border-color: var(--color-purple);
+    --border-color: var(--color-purple-500);
   }
 
   &:hover,
